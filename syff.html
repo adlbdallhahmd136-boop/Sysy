@@ -2,58 +2,348 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>مركز سيبويه · دخول الطلاب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=no">
+    <title>دخول الطلاب</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; font-weight: 700; }
-        body { background: #FBF9F7; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .login-view { max-width: 440px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); padding: 40px 32px; }
-        .login-header { text-align: center; margin-bottom: 36px; }
-        .login-header h2 { font-size: 28px; font-weight: 900; color: #1E4D5C; }
-        .login-header p { color: #5a6b7a; margin-top: 6px; font-size: 14px; }
-        .input-group { margin-bottom: 22px; }
-        .input-group label { display: block; font-weight: 700; font-size: 0.9rem; color: #1e293b; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 14px 18px; border: 2px solid #e0e7ef; border-radius: 16px; font-size: 1rem; background: #fafcff; transition: 0.2s; }
-        .input-group input:focus { outline: none; border-color: #C9A84C; box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.1); }
-        .login-btn { width: 100%; padding: 14px; background: #1E4D5C; color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        .login-btn:hover { background: #1a3d4a; }
-        .error-msg { color: #d32f2f; text-align: center; margin-top: 14px; font-size: 0.9rem; min-height: 20px; }
-        .loader-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1E4D5C; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s; }
-        .loader-hidden { opacity: 0; pointer-events: none; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.15); border-top: 5px solid #C9A84C; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loader-text { margin-top: 20px; color: #C9A84C; font-weight: 700; letter-spacing: 2px; font-size: 16px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            background: #FBF9F7;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        /* ===== الصورة ===== */
+        .login-logo {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 16px;
+            display: block;
+            animation: logoBounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        @keyframes logoBounce {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.06); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .login-logo-small {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 12px;
+            display: block;
+            animation: logoBounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .login-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #1E4D5C;
+            margin-bottom: 28px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== خيارات Student / Parent ===== */
+        .selection-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 24px;
+        }
+        
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 8px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideIn 0.4s ease forwards;
+        }
+        .option-row:nth-child(1) { animation-delay: 0.2s; }
+        .option-row:nth-child(3) { animation-delay: 0.35s; }
+        
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        
+        .option-row.selected .option-text { color: #C9A84C; }
+        .option-row.selected .option-icon svg { fill: #C9A84C; }
+        
+        .option-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .option-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: #1E4D5C;
+            transition: fill 0.2s;
+        }
+        .option-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1E4D5C;
+        }
+        
+        .divider-line {
+            width: 100%;
+            height: 1px;
+            background: #e8ecf1;
+            margin: 2px 0;
+        }
+        
+        /* ===== زر Next ===== */
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            background: #e0e5ea;
+            color: #8a94a0;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.4s ease 0.5s forwards;
+        }
+        .next-btn.active { background: #1E4D5C; color: #fff; }
+        .next-btn.active:active { background: #152e3a; }
+        
+        /* ===== شاشة الترحيب ===== */
+        .welcome-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .welcome-screen.show { display: flex; }
+        
+        .center-logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: logoBounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .welcome-text-animated {
+            font-size: 18px;
+            font-weight: 900;
+            color: #1E4D5C;
+            text-align: center;
+            line-height: 1.6;
+            min-height: 24px;
+        }
+        
+        /* ===== شاشة تسجيل الدخول ===== */
+        .login-form { display: none; flex-direction: column; }
+        .login-form.show { display: flex; }
+        
+        .input-wrapper {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .input-wrapper label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E4D5C;
+            margin-bottom: 6px;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 0;
+            border: none;
+            border-bottom: 2px solid #d5dbe3;
+            font-size: 17px;
+            font-weight: 600;
+            background: transparent;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-bottom-color: #C9A84C;
+        }
+        .input-wrapper input::placeholder {
+            color: #b0b8c1;
+            font-size: 15px;
+        }
+        
+        .login-submit {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            background: #1E4D5C;
+            color: #fff;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+        .login-submit:active { background: #152e3a; }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #5a6b7a;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .error-msg {
+            color: #d32f2f;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 14px;
+            min-height: 18px;
+            font-weight: 600;
+        }
+        
         .hidden { display: none !important; }
+        
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 0.5s infinite;
+            color: #C9A84C;
+            font-weight: 400;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     </style>
 </head>
 <body>
 
-<div class="loader-screen" id="loaderScreen">
-    <div class="spinner"></div>
-    <div class="loader-text">مركز سيبويه</div>
-</div>
-
-<div id="loginView" class="login-view hidden">
-    <div class="login-header">
-        <h2>مرحباً بك</h2>
-        <p>مركز سيبويه · بوابة الطلاب</p>
+<div class="login-container" id="loginContainer">
+    
+    <!-- ===== شاشة 1: الاختيار ===== -->
+    <div id="selectionScreen">
+        <img src="https://b.top4top.io/p_3812z0ztb0.png" alt="Logo" class="login-logo">
+        <h1 class="login-title">Log In</h1>
+        
+        <div class="selection-options">
+            <div class="option-row" id="studentOption" onclick="selectOption('student')">
+                <div class="option-icon">
+                    <svg viewBox="0 0 448 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                </div>
+                <span class="option-text">Student</span>
+            </div>
+            <div class="divider-line"></div>
+            <div class="option-row" id="parentOption" onclick="selectOption('parent')">
+                <div class="option-icon">
+                    <svg viewBox="0 0 640 512"><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM504 312V248H440c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V136c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H552v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+                </div>
+                <span class="option-text">Parent</span>
+            </div>
+        </div>
+        
+        <button class="next-btn" id="nextBtn" disabled onclick="goToWelcome()">Next</button>
     </div>
-    <form id="loginForm">
-        <div class="input-group">
-            <label>اسم المستخدم</label>
-            <input type="text" id="loginUsername" autocomplete="off" required>
+    
+    <!-- ===== شاشة 2: الترحيب ===== -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <img src="https://i.postimg.cc/jSyt9RmC/20260518-032804.png" alt="Logo" class="center-logo" id="centerLogoInit" style="display:none;">
+        <div id="welcomeText" class="welcome-text-animated"></div>
+    </div>
+    
+    <!-- ===== شاشة 3: تسجيل الدخول ===== -->
+    <div id="loginScreen" class="login-form">
+        <img src="https://b.top4top.io/p_3812z0ztb0.png" alt="Logo" class="login-logo-small">
+        <h1 class="login-title">Log In</h1>
+        
+        <div class="input-wrapper">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter your username" autocomplete="off" required>
         </div>
-        <div class="input-group">
-            <label>كلمة المرور</label>
-            <input type="password" id="loginPassword" required>
+        
+        <div class="input-wrapper">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
         </div>
-        <button type="submit" class="login-btn">تسجيل الدخول</button>
+        
+        <button class="login-submit" onclick="handleLogin()">Log In</button>
+        <button class="back-btn" onclick="goBackToSelection()">← Back</button>
         <div id="loginError" class="error-msg"></div>
-    </form>
+    </div>
+    
 </div>
 
 <script>
+    let selectedType = '';
+    
+    function selectOption(type) {
+        selectedType = type;
+        document.getElementById('studentOption').classList.remove('selected');
+        document.getElementById('parentOption').classList.remove('selected');
+        if (type === 'student') document.getElementById('studentOption').classList.add('selected');
+        else if (type === 'parent') document.getElementById('parentOption').classList.add('selected');
+        document.getElementById('nextBtn').disabled = false;
+        document.getElementById('nextBtn').classList.add('active');
+    }
+    
+    function typeWriter(el, text, spd, cb) {
+        let i = 0; el.textContent = ''; el.classList.add('typing-cursor');
+        function t() {
+            if (i < text.length) { el.textContent += text.charAt(i); i++; setTimeout(t, spd); }
+            else { el.classList.remove('typing-cursor'); if (cb) setTimeout(cb, 250); }
+        }
+        t();
+    }
+    
+    function goToWelcome() {
+        if (!selectedType) return;
+        document.getElementById('selectionScreen').classList.add('hidden');
+        var ws = document.getElementById('welcomeScreen');
+        var logo = document.getElementById('centerLogoInit');
+        var txt = document.getElementById('welcomeText');
+        ws.classList.add('show');
+        logo.style.display = 'block';
+        setTimeout(function() {
+            typeWriter(txt, 'Welcome to the Sibawayh Center for Quran and its Sciences', 35, function() {
+                setTimeout(function() {
+                    ws.classList.remove('show');
+                    logo.style.display = 'none';
+                    txt.textContent = '';
+                    document.getElementById('loginScreen').classList.add('show');
+                }, 1200);
+            });
+        }, 400);
+    }
+    
+    function goBackToSelection() {
+        document.getElementById('loginScreen').classList.remove('show');
+        document.getElementById('selectionScreen').classList.remove('hidden');
+        document.getElementById('loginError').textContent = '';
+    }
+    
     const students = [
         { user: "sypa1356", pass: "vX9#mK2q", id: "st_k8mr4px2a" },
         { user: "sypa2481", pass: "bL7$tN4w", id: "st_q7vn9tlm5" },
@@ -83,38 +373,21 @@
         { user: "sypa9026", pass: "xP7$nR8t", id: "st_h2xp7nrt8" },
         { user: "sypa5371", pass: "qW1&mL9y", id: "st_c4qw1mly9" }
     ];
-
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            var loadeفr = document.getElementById('loaderScreen');
-            loader.classList.add('loader-hidden');
-            setTimeout(function() {
-                loader.style.display = 'none';
-                document.getElementById('loginView').classList.remove('hidden');
-            }, 400);
-        }, 2000);
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var username = document.getElementById('loginUsername').value.trim();
-        var password = document.getElementById('loginPassword').value;
-        var error = document.getElementById('loginError');
-        var found = false;
-
+    
+    function handleLogin() {
+        var u = document.getElementById('loginUsername').value.trim();
+        var p = document.getElementById('loginPassword').value;
+        var e = document.getElementById('loginError');
+        if (!u || !p) { e.textContent = 'أدخل اسم المستخدم وكلمة المرور'; return; }
         for (var i = 0; i < students.length; i++) {
-            if (students[i].user === username && students[i].pass === password) {
-                found = true;
-                error.textContent = '';
+            if (students[i].user === u && students[i].pass === p) {
+                e.textContent = '';
                 window.location.href = 'main.html?id=' + students[i].id;
-                break;
+                return;
             }
         }
-
-        if (!found) {
-            error.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
-        }
-    });
+        e.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+    }
 </script>
 </body>
 </html>
